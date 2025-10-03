@@ -1,3 +1,5 @@
+# banco.py cuida do BANCO DE DADOS
+
 import sqlite3
 import os
 
@@ -42,7 +44,7 @@ def inserir_jogador(nome, idade, time, posicao, nacionalidade):
         cursor.execute("INSERT INTO squad (nome, idade, time, posicao, nacionalidade) VALUES (?, ?, ?, ?, ?)",
                        (nome, idade, time, posicao, nacionalidade))
         conexao.commit() #salva as alteracoes
-        print("Jogador adionado ao banco com sucesso!")
+        print("Jogador adicionado ao banco com sucesso!")
     except sqlite3.IntegrityError:
         print("Erro: Jogador já existente no banco.")
 ##
@@ -51,20 +53,45 @@ def listar_jogador():
     cursor.execute("SELECT * FROM squad")
     jogador = cursor.fetchall() #lista
     for j in jogador:
-        os.system('cls')
-        # print("\n")
         print(j) #nao precisa de j++
 
-# def listar_jogador_id:
+###
+def listar_jogador_time(time):
+    cursor.execute ("SELECT * FROM squad WHERE time LIKE ?", (time + '%',)) # coringa para buscar qualquer coisa que comece com o valor --> facilita busca
+    jogador = cursor.fetchall()
+    if not jogador:
+        print(f"\nNenhum jogador encontrado no time '{time}'.")
+        return
+    for j in jogador:
+        print(j)
 
-# def listar_jogador_nome:
+def listar_jogador_posicao(posicao):
+    cursor.execute ("SELECT * FROM squad WHERE posicao = ?", (posicao,))
+    jogador = cursor.fetchall()
+    if not jogador:
+        print(f"\nNenhum jogador encontrado na posição '{posicao}'.")
+        return
+    for j in jogador:
+        print(j)
 
-# def listar_jogador_time:
+def listar_jogador_nacionalidade(nacionalidade):
+    cursor.execute ("SELECT * FROM squad WHERE nacionalidade LIKE ?", (nacionalidade + '%',))
+    jogador = cursor.fetchall()
+    if not jogador:
+        print(f"\nNenhum jogador encontrado com a nacionalidade '{nacionalidade}'.")
+        return
+    for j in jogador:
+        print(j)
 
-# def listar_jogador_posicao:
-
-# def listar_jogador_nacionalidade:
-
+def listar_jogador_nome(nome):
+    cursor.execute ("SELECT * FROM squad WHERE nome LIKE ?", (nome + '%',))
+    jogador = cursor.fetchall()
+    if not jogador:
+        print(f"\nNenhum jogador encontrado com o nome '{nome}'.")
+        return
+    for j in jogador:
+        print(j)
+###
 
 ##
 #Update
@@ -80,7 +107,7 @@ def atualizar_jogador(id, nome, idade, time, posicao, nacionalidade):
 
 
 #Delete
-def excluir_jogador(id):
+def excluir_jogador(id): #tem que passar o id como parametro
     cursor.execute("DELETE FROM squad WHERE id = ?", (id,)) #sqlite3 tem problema com id pq pega o valor como numero (5) = 5 --> colocar virgula no final
     if cursor.rowcount > 0: #se a linha for excluida
         print("Jogador excluído com sucesso!")

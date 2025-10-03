@@ -1,3 +1,6 @@
+#main.py cuida da INTERFACE
+
+
 import sqlite3
 import sys
 import banco as db
@@ -21,40 +24,44 @@ def inserir_jogador():
         return
     while(True): #testa se digitou numero
         try:
-            idade = int(input(f"\nQual a idade do {nome}?\n")) #converte string para int
+            idade = int(input(f"\nQual a idade do '{nome}'?\n")) #converte string para int
             if idade == 0:
                 return
             break #sai do loop
         except ValueError:
             os.system('cls')
             print("Digite um valor numérico inteiro ou 0 para voltar ao menu principal.\n")
-    time = input(f"\nQual o time atual do {nome}?\n").strip()
+    time = input(f"\nQual o time atual do '{nome}'?\n").strip()
     if time.lower() == "cancelar" or time == '0': #volta ao menu principal
         return
-    posicao = input(f"\nQual posição o {nome} joga? Escreva em até 3 letras (CAM, CDM, ST, LW, RW, etc)\n").strip()
+    posicao = input(f"\nQual posição o '{nome}' joga? Escreva em até 3 letras (CAM, CDM, ST, LW, RW, etc)\n").strip().upper()
     if posicao.lower() == "cancelar" or posicao == '0': #volta ao menu principal
         return
-    nacionalidade = input(f"\nQual a nacionalidade do {nome}? \n").strip()
+    nacionalidade = input(f"\nQual a nacionalidade do '{nome}'? \n").strip()
     if nacionalidade.lower() == "cancelar" or nacionalidade == '0': #volta ao menu principal
         return
     db.inserir_jogador(nome, idade, time, posicao, nacionalidade) #insere dados com o banco.py
 
 ###
 def listar_jogador():
+    #os.system('cls')
     if db.verificar_banco_vazio(): #se o banco estiver vazio
         print("\nNenhum jogador cadastrado no banco. Pressione Enter para retornar ao menu.\n")
         input()
         return
-    db.listar_jogador()
+    else:
+        db.listar_jogador()
+        print("\nPressione Enter para retornar ao menu.\n")
+        input()
+        return
 
 def menu_listar():
     print("--- Menu de Listas ---\n")
-    print("1. Por id")
-    print("2. Por nome")
-    print("3. Por time")
-    print("4. Por posição")
-    print("5. Por nacionalidade")
-    print("6. Voltar")
+    print("1. Por time")
+    print("2. Por posição")
+    print("3. Por nacionalidade")
+    print("4. Por nome")
+    print("5. Voltar")
 
 def listar_jogador_filtro():
     if db.verificar_banco_vazio(): #se o banco estiver vazio
@@ -63,40 +70,75 @@ def listar_jogador_filtro():
         return
     
     while(True): #mantem o menu de listar ativo
-        os.system('cls')
+        # os.system('cls')
         menu_listar()
         opcao = input("\nComo deseja listar os jogadores?\n")
         match opcao:
             case "1":
-                listar_jogador_id()
-            case "2":
-                listar_jogador_nome()
-            case "3":
                 listar_jogador_time()
-            case "4":
+            case "2":
                 listar_jogador_posicao()
+            case "3":
+                listar_jogador_nacionalidade()   
+            case "4":
+                listar_jogador_nome() 
             case "5":
-                listar_jogador_nacionalidade()
-            case "6":
                 return #finaliza a funcao atual e volta para a main(nesse caso, o listar_jogador_filtro --> esta no primeiro menu)
             case _: #caso nao escolha um numero do menu
                 os.system('cls')
                 print("\nOpção Inválida. Por favor, selecione uma das opções exibidas.")
+                print("\nPressione Enter para continuar.")
+                input()
+                return
 
-def listar_jogador_id():
-    db.listar_jogador_id()
-
-def listar_jogador_nome():
-    db.listar_jogador_nome()
 
 def listar_jogador_time():
-    db.listar_jogador_time()
+    while(True):
+        time = input("\nDigite o nome do time que deseja listar os jogadores ou '0' para voltar ao menu principal:\n").strip().lower()
+        if time == '0':
+            return
+        elif time.lower() == "cancelar":
+            return
+        db.listar_jogador_time(time)
+        print("\nPressione Enter para voltar ao menu de filtros.")
+        input()
+        return
+
+def listar_jogador_nome():
+    while(True):
+        nome = input("\nDigite o nome (ou parte do nome) que deseja listar os jogadores ou '0' para voltar ao menu principal:\n").strip().lower()
+        if nome == '0':
+            return
+        elif nome.lower() == "cancelar":
+            return
+        db.listar_jogador_nome(nome)
+        print("\nPressione Enter para voltar ao menu de filtros.")
+        input()
+        return
 
 def listar_jogador_posicao():
-    db.listar_jogador_posicao()
+    while(True):
+        posicao = input("\nDigite a posição (em até 3 letras) que deseja listar os jogadores ou '0' para voltar ao menu principal:\n").strip().upper()
+        if posicao == '0':
+            return
+        elif posicao.lower() == "cancelar":
+            return
+        db.listar_jogador_posicao(posicao)
+        print("\nPressione Enter para voltar ao menu de filtros.")
+        input()
+        return
 
 def listar_jogador_nacionalidade():
-    db.listar_jogador_nacionalidade()
+    while(True):
+        nacionalidade = input("\nDigite a nacionalidade que deseja listar os jogadores ou '0' para voltar ao menu principal:\n").strip().lower()
+        if nacionalidade == '0':
+            return
+        elif nacionalidade.lower() == "cancelar":
+            return
+        db.listar_jogador_nacionalidade(nacionalidade)
+        print("\nPressione Enter para voltar ao menu de filtros.")
+        input()
+        return
 
 ###
 def atualizar_jogador():
@@ -118,7 +160,7 @@ def atualizar_jogador():
             print("Digite um valor numérico inteiro ou 0 para voltar ao menu principal.\n")
     
     if not db.verificar_jogador(id): #se o jogador nao existir
-        print(f"\nJogador com ID {id} não encontrado. Pressione Enter para retornar ao menu.\n")
+        print(f"\nJogador com ID '{id}' não encontrado. Pressione Enter para retornar ao menu.\n")
         input() #pausa a tela
         return
 
@@ -127,7 +169,7 @@ def atualizar_jogador():
         return
     while(True): #testa se digitou numero
         try:
-            new_idade = int(input(f"\nQual a nova idade do {new_nome}?\n")) #converte string para int
+            new_idade = int(input(f"\nQual a nova idade do '{new_nome}'?\n")) #converte string para int
             if new_idade == 0: #int nao precisa de aspas
                 return
             break #sai do loop
@@ -135,15 +177,15 @@ def atualizar_jogador():
             os.system('cls')
             print("Digite um valor numérico inteiro ou 0 para voltar ao menu principal.\n")
 
-    new_time = input(f"\nQual o novo time atual do {new_nome}?\n").strip()
+    new_time = input(f"\nQual o novo time do '{new_nome}'?\n").strip()
     if new_time.lower() == "cancelar" or new_time == '0': #volta ao menu principal
         return
     
-    new_posicao = input(f"\nQual a nova posição que o {new_nome} joga? Escreva em até 3 letras (CAM, CDM, ST, LW, RW, etc)\n").strip()
+    new_posicao = input(f"\nQual a nova posição que o '{new_nome}' joga? Escreva em até 3 letras (CAM, CDM, ST, LW, RW, etc)\n").strip().upper()
     if new_posicao.lower() == "cancelar" or new_posicao == '0': #volta ao menu principal
         return
     
-    new_nacionalidade = input(f"\nQual a nova nacionalidade do {new_nome}? \n").strip()
+    new_nacionalidade = input(f"\nQual a nova nacionalidade do '{new_nome}'? \n").strip()
     if new_nacionalidade.lower() == "cancelar" or new_nacionalidade == '0': #volta ao menu principal
         return
     
@@ -158,28 +200,37 @@ def excluir_jogador():
         print("\nNenhum jogador cadastrado no banco. Pressione Enter para retornar ao menu.\n")
         input()
         return
-    
-    db.listar_jogador() #mostra a lista de jogadores
-    print("\nDigite 'cancelar' ou '0' para voltar ao menu principal")
-    while(True):
-        try:
-            id = int(input("\nQual o ID do jogador que deseja excluir?\n")) #converte string para int
-            if id == 0: #int nao precisa de aspas
+
+    while True:
+        os.system('cls')
+        db.listar_jogador() #mostra a lista de jogadores
+        print("\nDigite 'cancelar' ou '0' para voltar ao menu principal")
+        while(True):
+            try:
+                id = int(input("\nQual o ID do jogador que deseja excluir?\n")) #converte string para int
+                if id == 0: #int nao precisa de aspas
+                    return
+                break #sai do loop
+            except ValueError:
+                os.system('cls')
+                print("Digite um valor numérico inteiro ou 0 para voltar ao menu principal.\n")
+        if not db.verificar_jogador(id): #se o jogador nao existir
+            print(f"\nJogador com ID {id} não encontrado. Pressione Enter para retornar ao menu.\n")
+            input() #pausa a tela
+            return
+        db.excluir_jogador(id)
+        if db.verificar_banco_vazio():
+            print("\nNao há mais jogadores no banco. Pressione Enter para retornar ao menu.\n")
+            input()
+            return
+        while True:
+            opcao = input("\nDeseja excluir outro jogador? (s/n)\n").strip().lower() #remove espacos e coloca em minusculo
+            if opcao == 'n':
                 return
-            break #sai do loop
-        except ValueError:
-            os.system('cls')
-            print("Digite um valor numérico inteiro ou 0 para voltar ao menu principal.\n")
-    if not db.verificar_jogador(id): #se o jogador nao existir
-        print(f"\nJogador com ID {id} não encontrado. Pressione Enter para retornar ao menu.\n")
-        input() #pausa a tela
-        return
-    db.excluir_jogador(id)
-    opcao = input("\nDeseja excluir outro jogador? (s/n)\n").strip().lower() #remove espacos e coloca em minusculo
-    if opcao == 'n':
-        return
-    elif opcao != 's': #elimina a necessidade de um else --> volta pro loop principal se for diferente de 's' ou 'n'
-        print("\nOpção inválida. Por favor, responda com 's' ou 'n'.")
+            elif opcao == 's':
+                break
+            else:
+                print("\nOpção inválida. Por favor, responda com 's' ou 'n'.")
 
 
 def main():
@@ -206,5 +257,8 @@ def main():
             case _: #caso nao escolha um numero do menu
                 os.system('cls')
                 print("\nOpção Inválida. Por favor, selecione uma das opções exibidas.")
-        
+                print("\nPressione Enter para continuar.")
+                input()
+
+#começo do programa        
 main()
