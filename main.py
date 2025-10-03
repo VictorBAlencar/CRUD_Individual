@@ -259,5 +259,6 @@ def main():
                 print("\nOpção Inválida. Por favor, selecione uma das opções exibidas.")
                 print("\nPressione Enter para continuar.")
                 input()
-        
+
+#começo do programa        
 main()
